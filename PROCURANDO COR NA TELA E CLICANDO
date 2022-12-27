@@ -1,0 +1,15 @@
+import pyautogui
+import time
+
+while True: 
+    sc=pyautogui.screenshot(region= (17,301,1348,3011))
+    width,height = sc.size
+    
+    for x in range(0,width,5):
+        for y in range(0,height,5):
+            r,g,b = sc.getpixel((x,y))
+            print(r,g,b)
+            
+            if r == 255 and g == 150 and b == 50:
+                pyautogui.click(17+x,301+y)
+                break
