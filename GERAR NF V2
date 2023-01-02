@@ -1,0 +1,109 @@
+import pyautogui
+import time
+import pyttsx3
+import sys
+import pyperclip
+
+celula ='oiiiiiiiiii'
+
+robo = pyttsx3.init()
+rate = robo.getProperty('rate')
+voices = robo.getProperty('voices')
+
+robo.setProperty('voice', voices[1].id)
+robo.setProperty('rate', 125)
+
+
+while len(celula)>5:
+
+    time.sleep(6)
+
+    pyautogui.hotkey('ctrl', 'c')
+    
+    time.sleep(2)
+    
+    pyautogui.hotkey('alt','tab')
+    time.sleep(2)
+    pyautogui.moveTo(345, 258) #Ver se vai clicar no lugar certo 
+    time.sleep(2)
+    pyautogui.click()
+    time.sleep(2)
+    pyautogui.hotkey('ctrl','a')
+    time.sleep(2)
+    pyautogui.hotkey('ctrl', 'v')
+    pyautogui.hotkey('enter')
+    time.sleep(2)
+    pyautogui.hotkey('alt','tab')
+    time.sleep(2)
+    pyautogui.press('tab', presses=6)
+    time.sleep(2)
+    pyautogui.hotkey('ctrl', 'c')
+
+    time.sleep(5)
+
+
+    pyautogui.hotkey('alt','tab')
+
+    time.sleep(3)
+    pyautogui.hotkey('ctrl','f')
+    pyautogui.hotkey('ctrl','v')
+    pyautogui.hotkey('enter', presses=2)
+
+    time.sleep(5)
+
+    analise = False
+    sc=pyautogui.screenshot(region= (17,301,1348,3011))
+    width,height = sc.size
+
+    for x in range(0,width,5):
+        for y in range(0,height,5):
+                r,g,b = sc.getpixel((x,y))
+                #print(r,g,b)
+
+                if r == 255 and g == 150 and b == 50:
+                    pyautogui.click(17+x,301+y)
+                    analise = True
+                    break
+        if analise == True:
+            break
+
+    pyautogui.press('tab', presses=2)
+    pyautogui.press('space')
+    
+   
+    enviar_erp = pyautogui.locateCenterOnScreen('BOTAO_ENVIAR_ERP.PNG')
+    pyautogui.click(enviar_erp.x, enviar_erp.y)
+
+    time.sleep(10)
+    erro_transaction_type = pyautogui.locateCenterOnScreen('ErroTransactionType.png')
+
+    stop = False
+
+    if      pyautogui.locateCenterOnScreen('ErroTransactionType.png'):
+            robo.say('ERRO DE TRANSACTION TYPE')
+            robo.runAndWait()
+            if pyautogui.locateCenterOnScreen('ErroTransactionType.png'):
+                stop = True
+
+            if stop == True:
+                    sys.exit('Saindo')
+
+    botao_ok = pyautogui.locateCenterOnScreen('OK WBC.png')
+    pyautogui.click(botao_ok.x, botao_ok.y)
+    
+    time.sleep(10)
+    
+    pyautogui.hotkey('alt','tab')
+    time.sleep(2)
+    pyautogui.press('left', presses=11)
+    time.sleep(2)
+    pyautogui.typewrite('gerado')
+    time.sleep(3)
+    pyautogui.hotkey('enter')
+    time.sleep(3)
+    pyautogui.press('tab', presses=5)
+    time.sleep(2)
+    pyautogui.hotkey('ctrl','c')
+    celula = pyperclip.paste()
+    
+print('saiu, deu certo')
