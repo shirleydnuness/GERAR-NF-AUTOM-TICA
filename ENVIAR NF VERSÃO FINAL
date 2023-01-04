@@ -1,0 +1,171 @@
+import pyautogui
+import time
+import pyttsx3
+import sys
+import pyperclip
+
+#essa função verifica se apareceu a mensagem de nota enviada com sucesso no WBC, caso positivo ela vai anotar na planilha gerado com sucesso, caso negativo ela vai 
+#anotar erro na planilha
+
+def verificar_nota():
+    time.sleep(4)
+    enviado_com_sucesso = pyautogui.locateOnScreen('NOTA_ENVIADA_SUCESSO.png',region=(180,182,575,61))
+
+    if enviado_com_sucesso == None:
+        print("Erro no Envio da Nota")
+        robo.say('ERRO')
+        robo.runAndWait()
+
+        #clicar no botão ok para sair a mensagem da tela
+        botao_ok = pyautogui.locateCenterOnScreen('OK WBC.png')
+        pyautogui.click(botao_ok.x, botao_ok.y)
+        time.sleep(2)
+
+        #ir para a planilha escrever que deu erro
+        pyautogui.hotkey('alt','tab')
+        time.sleep(2)
+        pyautogui.press('left', presses=11)
+        time.sleep(2)
+        pyautogui.typewrite('erro')
+        time.sleep(3)
+        pyautogui.hotkey('enter')
+        time.sleep(3)
+        pyautogui.press('tab', presses=5)
+        print(enviado_com_sucesso)
+        print("Enviado com Sucesso")
+
+    else:
+
+        #clicar no botão ok para sair a mensagem da tela
+        botao_ok = pyautogui.locateCenterOnScreen('OK WBC.png')
+        pyautogui.click(botao_ok.x, botao_ok.y)
+        time.sleep(2)
+        #ir para a planilha escrever que foi gerada a nota
+        pyautogui.hotkey('alt','tab')
+        time.sleep(2)
+        pyautogui.press('left', presses=11)
+        time.sleep(2)
+        pyautogui.typewrite('gerado')
+        time.sleep(3)
+        pyautogui.hotkey('enter')
+        time.sleep(3)
+        pyautogui.press('tab', presses=5)
+        
+    return
+
+#Essa função é usada para quando for pesquisada com control F o valor total da nota e ela não for achada, nesse caso tem que anotar na planilha 
+#nota não encontrada e seguir com a vida para a próxima linha
+
+def nota_encontrada():
+    
+    pyautogui.press('tab', presses=2)
+    pyautogui.press('space')
+    
+   
+    #clicar no botão de enviar erp
+    enviar_erp = pyautogui.locateCenterOnScreen('BOTAO_ENVIAR_ERP.PNG')
+    pyautogui.click(enviar_erp.x, enviar_erp.y)
+
+   
+    #Verificar se tem alguma mensagem diferente de enviado com sucesso 
+    
+    time.sleep(15)
+    verificar_nota()   
+    return 
+
+celula ='oiiiiiiiiii'
+
+#informações para o robo falar
+robo = pyttsx3.init()
+rate = robo.getProperty('rate')
+voices = robo.getProperty('voices')
+
+robo.setProperty('voice', voices[1].id)
+robo.setProperty('rate', 125)
+
+
+while len(celula)>5:
+    pula_se_nao_achar_nota = False
+    
+    time.sleep(6)
+
+    pyautogui.hotkey('ctrl', 'c')
+    
+    time.sleep(2)
+    
+    pyautogui.hotkey('alt','tab')
+    time.sleep(2)
+    pyautogui.moveTo(345, 258) #Ver se vai clicar no lugar certo 
+    time.sleep(2)
+    pyautogui.click()
+    time.sleep(2)
+    pyautogui.hotkey('ctrl','a')
+    time.sleep(2)
+    pyautogui.hotkey('ctrl', 'v')
+    pyautogui.hotkey('enter')
+    time.sleep(2)
+    pyautogui.hotkey('alt','tab')
+    time.sleep(2)
+    pyautogui.press('tab', presses=6)
+    time.sleep(2)
+    pyautogui.hotkey('ctrl', 'c')
+
+    time.sleep(5)
+
+
+    pyautogui.hotkey('alt','tab')
+
+    time.sleep(3)
+    pyautogui.hotkey('ctrl','f')
+    pyautogui.hotkey('ctrl','v')
+    pyautogui.hotkey('enter', presses=2)
+
+    time.sleep(10)
+
+    analise = False
+    sc=pyautogui.screenshot(region= (17,301,1348,3011))
+    width,height = sc.size
+
+    for x in range(0,width,5):
+        for y in range(0,height,5):
+                r,g,b = sc.getpixel((x,y))
+                #print(r,g,b)
+
+                if r == 255 and g == 150 and b == 50:
+                    pyautogui.click(17+x,301+y)
+                    analise = True
+                    break
+                
+        if analise == True:
+            break
+    
+    if analise != True:
+        pyautogui.hotkey('alt','tab')
+        time.sleep(2)
+        pyautogui.press('left', presses=11)
+        time.sleep(2)
+        pyautogui.typewrite('nao achado')
+        time.sleep(3)
+        pyautogui.hotkey('enter')
+        time.sleep(3)
+        pyautogui.press('tab', presses=5)
+        pula_se_nao_achar_nota = True    
+        
+    
+    if pula_se_nao_achar_nota == False:
+        nota_encontrada()
+        
+        
+    #copiar e verificar se a célula está vazia ou não
+                #se stiver vazia sai do while e acaba
+        
+    time.sleep(2)
+    pyautogui.press('tab', presses=2)
+    time.sleep(2)
+    pyautogui.press('left', presses=2)
+    time.sleep(2)
+    pyautogui.hotkey('ctrl','c')
+    celula = pyperclip.paste()
+    
+print('saiu, deu certo')
+pyautogui.hotkey('esc')
